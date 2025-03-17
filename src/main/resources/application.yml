@@ -1,0 +1,13 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: NeoSchema
+  datasource:
+    url: jdbc:mysql://${neoschema.mysql.host}:${neoschema.mysql.port}/neoschema?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${neoschema.mysql.username}
+    password: ${neoschema.mysql.password}
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 10
