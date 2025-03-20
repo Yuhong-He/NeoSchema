@@ -21,6 +21,13 @@ class GlobalExceptionHandler {
         )
     }
 
+    @ExceptionHandler(ClientErrorException::class)
+    fun handleClientErrorException(ex: ClientErrorException): ResponseEntity<String> {
+        return ResponseEntity.status(ex.errorCode).body(
+            ex.message ?: "HTTP Client Error"
+        )
+    }
+
 //    @ExceptionHandler(Exception::class)
 //    fun handleGenericException(ex: Exception): ResponseEntity<String> {
 //        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error")

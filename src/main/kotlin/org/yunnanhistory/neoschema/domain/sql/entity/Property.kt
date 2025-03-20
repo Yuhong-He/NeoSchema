@@ -17,7 +17,7 @@ import java.io.Serializable
 @Data
 @ToString
 @IdClass(PropertyId::class)
-class Property: Serializable {
+class Property {
     @Id
     @Column(name = "label_id", nullable = false)
     val labelId: Long? = null
@@ -39,20 +39,13 @@ class Property: Serializable {
 
     val isNumeric: Boolean = false
 
-    val length: Length = Length.SHORT
-
     val isUrl: Boolean = false
 
-    val displayText: String? = null
+    @Column(nullable = true, length = 255)
+    val regex: String? = null
 }
 
 data class PropertyId(
     val labelId: Long = 0,
     val displayOrder: Int = 0
 ) : Serializable
-
-enum class Length(val value: Int) {
-    SHORT(0),
-    MEDIUM(1),
-    LONG(2)
-}

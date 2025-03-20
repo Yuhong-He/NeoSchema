@@ -5,4 +5,6 @@ import org.springframework.stereotype.Repository
 import org.yunnanhistory.neoschema.domain.sql.entity.Label
 
 @Repository
-interface LabelRepository: JpaRepository<Label, Long>
+interface LabelRepository: JpaRepository<Label, Long> {
+    fun findByTitle(title: String): Label?
+}
