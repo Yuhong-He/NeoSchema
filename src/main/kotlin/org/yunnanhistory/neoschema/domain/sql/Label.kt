@@ -26,18 +26,23 @@ class Label(
     @Column(nullable = true, length = 255)
     val alias: String? = null,
 
-    val categorisable: Boolean = false,
-
     @OneToMany(mappedBy = "label", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     val properties: List<Property> = mutableListOf()
 ) {
     companion object {
-        fun fromDTO(dto: LabelRequestDTO) = Label(
+        fun fromDTO(dto: LabelCreateRequestDTO) = Label(
             title = dto.title,
-            alias = dto.alias,
-            categorisable = dto.categorisable
+            alias = dto.alias
+        )
+
+        fun fromDTO(dto: LabelUpdateRequestDTO) = Label(
+            id = dto.id,
+            title = dto.title,
+            alias = dto.alias
         )
     }
 }
 
-class LabelRequestDTO(val title: String, val alias: String?, val categorisable: Boolean)
+class LabelCreateRequestDTO(val title: String, val alias: String?)
+
+class LabelUpdateRequestDTO(val id: Long, val title: String, val alias: String?)

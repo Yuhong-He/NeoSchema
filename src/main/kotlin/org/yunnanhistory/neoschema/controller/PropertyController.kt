@@ -26,7 +26,7 @@ class PropertyController(
     }
 
     @PostMapping
-    fun createProperty(@RequestBody list: PropertyResponseDTOList): ResponseEntity<Label> {
+    fun createOrUpdateProperty(@RequestBody list: PropertyResponseDTOList): ResponseEntity<Label> {
         return ResponseEntity.ok(propertyService.createOrUpdate(list))
     }
 }

@@ -9,11 +9,13 @@ import org.yunnanhistory.neoschema.exceptions.ClientErrorException
 import org.yunnanhistory.neoschema.exceptions.ResourceNotFoundException
 import org.yunnanhistory.neoschema.repository.LabelRepository
 import org.yunnanhistory.neoschema.repository.PropertyRepository
+import org.yunnanhistory.neoschema.utils.LabelUtils
 
 @Service
 class PropertyService(
     private val propertyRepository: PropertyRepository,
-    private val labelRepository: LabelRepository
+    private val labelRepository: LabelRepository,
+    private val labelUtils: LabelUtils
 ) {
     fun getByLabelIdAndDisplayOrder(labelId: Long, displayOrder: Int): Property {
         val property = propertyRepository.findByLabelIdAndDisplayOrder(labelId, displayOrder)
@@ -26,7 +28,7 @@ class PropertyService(
         val labelId = dtoList.labelId
 
         // Validate label exists
-        labelRepository.findById(labelId).orElse(null) ?: throw ResourceNotFoundException(Label::class, "id=${labelId}")
+        labelUtils.validateLabelIdExists(labelId)
 
         // Delete all properties of the label
         propertyRepository.deleteAllByLabelId(labelId)
