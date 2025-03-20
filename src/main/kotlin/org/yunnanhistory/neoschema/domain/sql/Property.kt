@@ -10,6 +10,7 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import lombok.Data
 import lombok.ToString
+import org.yunnanhistory.neoschema.exceptions.ClientErrorException
 import java.io.Serializable
 import java.util.regex.PatternSyntaxException
 
@@ -28,7 +29,10 @@ class Property (
     val displayOrder: Int = 0,
 
     @Column(nullable = false, length = 255)
-    val title: String? = null,
+    val type: String = "",
+
+    @Column(nullable = false, length = 255)
+    val title: String = "",
 
     @Column(nullable = true, length = 255)
     val alias: String? = null,
@@ -49,6 +53,7 @@ class Property (
         fun fromDTO(labelId: Long, dto: PropertyRequestDTO) = Property(
             labelId = labelId,
             displayOrder = dto.displayOrder,
+            type = dto.type,
             title = dto.title,
             alias = dto.alias,
             isNumeric = dto.isNumeric,
@@ -57,12 +62,19 @@ class Property (
         )
     }
 
-    fun validateRegex(): Boolean {
-        return try {
+    fun validateRegex() {
+        if (regex == null) return
+        try {
             regex?.let { Regex(it) }
-            true
         } catch (e: PatternSyntaxException) {
-            false
+            throw ClientErrorException(message = "Invalid regex: $regex")
+        }
+    }
+
+    fun validateTypeMatchNeo4jNamingRule() {
+        val regex = "^[a-z][A-Za-z0-9_]*$".toRegex()
+        if (!regex.matches(type)) {
+            throw ClientErrorException(message = "Property type name: '$type', must match Neo4j naming rule: ^[a-z][A-Za-z0-9_]*$")
         }
     }
 }
@@ -74,6 +86,7 @@ data class PropertyId(
 
 class PropertyRequestDTO(
     val displayOrder: Int,
+    val type: String,
     val title: String,
     val alias: String?,
     val isNumeric: Boolean,

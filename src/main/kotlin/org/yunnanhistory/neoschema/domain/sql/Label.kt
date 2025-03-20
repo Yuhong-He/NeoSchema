@@ -10,6 +10,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import lombok.Data
+import org.yunnanhistory.neoschema.exceptions.ClientErrorException
 
 
 @Entity
@@ -19,6 +20,9 @@ class Label(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
+
+    @Column(nullable = false, length = 255)
+    val type: String = "",
 
     @Column(nullable = false, length = 255)
     val title: String = "",
@@ -31,18 +35,27 @@ class Label(
 ) {
     companion object {
         fun fromDTO(dto: LabelCreateRequestDTO) = Label(
+            type = dto.type,
             title = dto.title,
             alias = dto.alias
         )
 
         fun fromDTO(dto: LabelUpdateRequestDTO) = Label(
             id = dto.id,
+            type = dto.type,
             title = dto.title,
             alias = dto.alias
         )
     }
+
+    fun validateTypeMatchNeo4jNamingRule() {
+        val regex = "^[A-Z][A-Za-z0-9_]*$".toRegex()
+        if (!regex.matches(type)) {
+            throw ClientErrorException(message = "Label type name: '$type', must match Neo4j naming rule: ^[A-Z][A-Za-z0-9_]*$")
+        }
+    }
 }
 
-class LabelCreateRequestDTO(val title: String, val alias: String?)
+class LabelCreateRequestDTO(val type: String, val title: String, val alias: String?)
 
-class LabelUpdateRequestDTO(val id: Long, val title: String, val alias: String?)
+class LabelUpdateRequestDTO(val id: Long, val type: String, val title: String, val alias: String?)

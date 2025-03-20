@@ -6,5 +6,6 @@ import org.yunnanhistory.neoschema.domain.sql.Label
 
 @Repository
 interface LabelRepository: JpaRepository<Label, Long> {
+    fun findByType(type: String): Label?
     fun findByTitle(title: String): Label?
 }

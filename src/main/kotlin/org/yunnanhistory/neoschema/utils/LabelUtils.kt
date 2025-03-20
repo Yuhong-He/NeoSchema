@@ -12,7 +12,12 @@ class LabelUtils(private val labelRepository: LabelRepository) {
         labelRepository.findById(id).orElse(null) ?: throw ResourceNotFoundException(Label::class, "id=${id}")
     }
 
-    fun validateLabelTitleNotExists(title: String, exceptItself: Boolean = false, id: Long? = null) {
+    fun validateLabelTypeAndTitleNotExists(type: String, title: String, exceptItself: Boolean = false, id: Long? = null) {
+        labelRepository.findByType(type)?.let { label ->
+            if (!(exceptItself && label.id == id)) {
+                throw ResourceExistsException(Label::class, "type=$type")
+            }
+        }
         labelRepository.findByTitle(title)?.let { label ->
             if (!(exceptItself && label.id == id)) {
                 throw ResourceExistsException(Label::class, "title=$title")

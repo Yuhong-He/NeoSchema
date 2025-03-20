@@ -5,7 +5,6 @@ import org.springframework.transaction.annotation.Transactional
 import org.yunnanhistory.neoschema.domain.sql.Label
 import org.yunnanhistory.neoschema.domain.sql.Property
 import org.yunnanhistory.neoschema.domain.sql.PropertyResponseDTOList
-import org.yunnanhistory.neoschema.exceptions.ClientErrorException
 import org.yunnanhistory.neoschema.exceptions.ResourceNotFoundException
 import org.yunnanhistory.neoschema.repository.LabelRepository
 import org.yunnanhistory.neoschema.repository.PropertyRepository
@@ -40,9 +39,8 @@ class PropertyService(
 
         // Validate properties and check regex
         properties.forEach { property ->
-            if (property.regex != null && !property.validateRegex()) {
-                throw ClientErrorException(message = "Invalid regex: ${property.regex}")
-            }
+            property.validateTypeMatchNeo4jNamingRule()
+            property.validateRegex()
         }
 
         // Save all properties in batch

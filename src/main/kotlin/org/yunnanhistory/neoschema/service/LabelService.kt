@@ -18,14 +18,18 @@ class LabelService(
     }
 
     fun create(dto: LabelCreateRequestDTO): Label {
-        labelUtils.validateLabelTitleNotExists(dto.title)
-        return labelRepository.save(Label.fromDTO(dto))
+        labelUtils.validateLabelTypeAndTitleNotExists(dto.type, dto.title)
+        val label = Label.fromDTO(dto)
+        label.validateTypeMatchNeo4jNamingRule()
+        return labelRepository.save(label)
     }
 
     fun update(dto: LabelUpdateRequestDTO): Label {
         labelUtils.validateLabelIdExists(dto.id)
-        labelUtils.validateLabelTitleNotExists(dto.title, true, dto.id)
-        return labelRepository.save(Label.fromDTO(dto))
+        labelUtils.validateLabelTypeAndTitleNotExists(dto.type, dto.title, true, dto.id)
+        val label = Label.fromDTO(dto)
+        label.validateTypeMatchNeo4jNamingRule()
+        return labelRepository.save(label)
     }
 
     fun delete(id: Long) {
