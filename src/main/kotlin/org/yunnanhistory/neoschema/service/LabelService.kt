@@ -1,31 +1,25 @@
 package org.yunnanhistory.neoschema.service
 
-import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.stereotype.Service
-import org.yunnanhistory.neoschema.domain.sql.entity.Label
-import org.yunnanhistory.neoschema.domain.sql.entity.LabelRequestDTO
+import org.yunnanhistory.neoschema.domain.sql.Label
+import org.yunnanhistory.neoschema.domain.sql.LabelRequestDTO
 import org.yunnanhistory.neoschema.exceptions.ResourceExistsException
+import org.yunnanhistory.neoschema.exceptions.ResourceNotFoundException
 import org.yunnanhistory.neoschema.repository.LabelRepository
-import java.util.*
 
 @Service
 class LabelService(
     private val labelRepository: LabelRepository
 ) {
     fun getById(id: Long): Label {
-        val label: Optional<Label> = labelRepository.findById(id)
-        return label.orElseThrow {
-            EmptyResultDataAccessException("No label found with id $id", 1)
-        }
+        return labelRepository.findById(id).orElse(null) ?: throw ResourceNotFoundException(Label::class, "id=${id}")
     }
 
-    fun createLabel(dto: LabelRequestDTO): Label {
-        val label: Label? = labelRepository.findByTitle(dto.title)
-        if (label == null) {
-            val newLabel = Label.fromDTO(dto)
-            return labelRepository.save(newLabel)
-        } else {
-            throw ResourceExistsException(dto.title)
+    fun create(dto: LabelRequestDTO): Label {
+        val label = labelRepository.findByTitle(dto.title)
+        if (label != null) {
+            throw ResourceExistsException(Label::class, "title=${dto.title}")
         }
+        return labelRepository.save(Label.fromDTO(dto))
     }
 }

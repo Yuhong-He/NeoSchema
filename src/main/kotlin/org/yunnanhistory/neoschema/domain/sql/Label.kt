@@ -1,4 +1,4 @@
-package org.yunnanhistory.neoschema.domain.sql.entity
+package org.yunnanhistory.neoschema.domain.sql
 
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
